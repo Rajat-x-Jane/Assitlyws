@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coming Soon</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+height:100vh;
+background:#0f172a;
+display:flex;
+justify-content:center;
+align-items:center;
+color:white;
+overflow:hidden;
+}
+
+/* section */
+
+.coming-section{
+height:100vh;
+width:100%;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+text-align:center;
+position:relative;
+}
+
+/* animated background circles */
+
+.circle{
+position:absolute;
+border-radius:50%;
+background:rgba(255,255,255,0.05);
+animation:float 10s infinite linear;
+}
+
+.circle1{
+width:300px;
+height:300px;
+top:10%;
+left:10%;
+}
+
+.circle2{
+width:200px;
+height:200px;
+bottom:15%;
+right:10%;
+animation-duration:14s;
+}
+
+.circle3{
+width:150px;
+height:150px;
+top:60%;
+left:20%;
+animation-duration:12s;
+}
+
+@keyframes float{
+0%{
+transform:translateY(0px);
+}
+50%{
+transform:translateY(-40px);
+}
+100%{
+transform:translateY(0px);
+}
+}
+
+/* text animation */
+
+.coming-text{
+font-size:60px;
+font-weight:bold;
+letter-spacing:4px;
+opacity:0;
+transform:translateY(40px);
+transition:1s;
+}
+
+.coming-text.show{
+opacity:1;
+transform:translateY(0);
+}
+
+</style>
+</head>
+
+<body>
+
+<section class="coming-section">
+
+<div class="circle circle1"></div>
+<div class="circle circle2"></div>
+<div class="circle circle3"></div>
+
+<h1 class="coming-text" id="comingText">
+COMING SOON
+</h1>
+
+</section>
+
+<script>
+
+window.addEventListener("load",function(){
+document.getElementById("comingText").classList.add("show");
+});
+
+</script>
+
+</body>
+</html>
