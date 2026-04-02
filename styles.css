@@ -30,6 +30,14 @@
 *::after {
   box-sizing: border-box;
 }
+.navbar {
+  position: -webkit-sticky; /* Support for Safari */
+  position: sticky;         /* Standard property */
+  top: 0;                   /* Stick to the very top */
+  z-index: 1000;            /* Ensure it stays above other content */
+  background-color: #333;   /* Optional: give it a solid color */
+  width: 100%;
+}
 
 html {
   scroll-behavior: smooth;
