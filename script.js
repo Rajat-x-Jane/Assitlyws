@@ -11,6 +11,9 @@ const servicesToggle = document.getElementById("services-toggle");
 const form = document.getElementById("consultation-form");
 const formStatus = document.getElementById("form-status");
 const yearSlot = document.getElementById("current-year");
+const prefersLiteMode = window.matchMedia("(max-width: 639px)").matches ||
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+  navigator.connection?.saveData === true;
 
 const WHATSAPP_NUMBER = "918059134416";
 
@@ -79,8 +82,12 @@ syncNavbar();
 window.addEventListener("scroll", syncNavbar, { passive: true });
 
 const revealItems = document.querySelectorAll(".reveal");
+const mainHeadingTargets = document.querySelectorAll("header h1, main h2");
+const canAnimateMainHeadings = !prefersLiteMode && window.matchMedia("(min-width: 768px)").matches;
+const headingPalette = ["#ff6b4a", "#ff3d81", "#30c7ff", "#4de2ff", "#8b5cf6", "#1da56f", "#f59e0b"];
+const headingHoverTimers = new WeakMap();
 
-if ("IntersectionObserver" in window) {
+if (!prefersLiteMode && "IntersectionObserver" in window) {
   const revealObserver = new IntersectionObserver((entries, observer) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
@@ -98,7 +105,7 @@ if ("IntersectionObserver" in window) {
   revealItems.forEach((item) => item.classList.add("is-visible"));
 }
 
-if ("IntersectionObserver" in window && sections.length && navLinks.length) {
+if (!prefersLiteMode && "IntersectionObserver" in window && sections.length && navLinks.length) {
   const sectionObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) {
@@ -117,6 +124,54 @@ if ("IntersectionObserver" in window && sections.length && navLinks.length) {
   });
 
   sections.forEach((section) => sectionObserver.observe(section));
+}
+
+const pickNextHeadingColor = (heading) => {
+  const lastIndex = Number(heading.dataset.lastColorIndex ?? -1);
+  let nextIndex = Math.floor(Math.random() * headingPalette.length);
+
+  if (headingPalette.length > 1) {
+    while (nextIndex === lastIndex) {
+      nextIndex = Math.floor(Math.random() * headingPalette.length);
+    }
+  }
+
+  heading.dataset.lastColorIndex = String(nextIndex);
+  return headingPalette[nextIndex];
+};
+
+const clearHeadingHover = (heading) => {
+  const timeoutId = headingHoverTimers.get(heading);
+
+  if (timeoutId) {
+    window.clearTimeout(timeoutId);
+    headingHoverTimers.delete(heading);
+  }
+
+  heading.classList.remove("is-animating");
+  heading.style.removeProperty("--heading-hover-color");
+};
+
+const triggerHeadingHover = (heading) => {
+  clearHeadingHover(heading);
+  heading.classList.add("is-animating");
+  heading.style.setProperty("--heading-hover-color", pickNextHeadingColor(heading));
+
+  const timeoutId = window.setTimeout(() => {
+    heading.classList.remove("is-animating");
+    heading.style.removeProperty("--heading-hover-color");
+    headingHoverTimers.delete(heading);
+  }, 3600);
+
+  headingHoverTimers.set(heading, timeoutId);
+};
+
+if (canAnimateMainHeadings) {
+  mainHeadingTargets.forEach((heading) => {
+    heading.classList.add("hover-heading-main");
+    heading.addEventListener("mouseenter", () => triggerHeadingHover(heading));
+    heading.addEventListener("mouseleave", () => clearHeadingHover(heading));
+  });
 }
 
 if (form && formStatus) {
